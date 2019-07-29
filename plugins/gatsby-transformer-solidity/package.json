@@ -1,0 +1,22 @@
+{
+  "name": "gatsby-transformer-solidity",
+  "description": "Gatsby transformer plugin for solidity files",
+  "version": "1.0.0",
+  "author": "Klaus Hott <klahott@gmail.com>",
+  "dependencies": {
+    "@babel/runtime": "^7.0.0",
+    "prettier": "^1.18.2",
+    "prettier-plugin-solidity": "^1.0.0-alpha.27",
+    "solidity-parser-antlr": "^0.4.6"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.0.0",
+    "babel-preset-gatsby-package": "^0.2.2",
+    "cross-env": "^5.1.4"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=8.0.0"
+  }
+}
