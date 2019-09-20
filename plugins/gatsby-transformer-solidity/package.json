@@ -4,16 +4,16 @@
   "version": "1.0.0",
   "author": "Klaus Hott <klahott@gmail.com>",
   "dependencies": {
-    "@babel/runtime": "^7.0.0",
+    "@babel/runtime": "^7.6.0",
     "prettier": "^1.18.2",
-    "prettier-plugin-solidity": "^1.0.0-alpha.27",
-    "solidity-parser-antlr": "^0.4.7"
+    "prettier-plugin-solidity": "^1.0.0-alpha.32",
+    "solidity-parser-antlr": "^0.4.11"
   },
   "devDependencies": {
-    "@babel/cli": "^7.0.0",
-    "@babel/core": "^7.0.0",
-    "babel-preset-gatsby-package": "^0.2.2",
-    "cross-env": "^5.1.4"
+    "@babel/cli": "^7.6.0",
+    "@babel/core": "^7.6.0",
+    "babel-preset-gatsby-package": "^0.2.4",
+    "cross-env": "^5.2.1"
   },
   "license": "MIT",
   "engines": {

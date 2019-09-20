@@ -2,7 +2,6 @@
 
 const path = require(`path`)
 const parser = require(`solidity-parser-antlr`)
-const configTransformObject = require(`./transformObject.js`)
 const configPrepareTransformParam = require(`./solidity/param.js`)
 
 async function onCreateNode({
@@ -12,13 +11,25 @@ async function onCreateNode({
   createNodeId,
   createContentDigest,
 }) {
-  const { createNode, createParentChildLink } = actions
+  const {createNode, createParentChildLink} = actions
 
-  const transformObject = configTransformObject({
-    createContentDigest,
-    createNode,
-    createParentChildLink,
-  })
+  const transformObject = (obj, id, type, parent) => {
+    const solidityNode = Object.assign({}, obj, {
+      id,
+      parent: parent.id,
+      internal: {
+        contentDigest: createContentDigest(obj),
+        type,
+      },
+    })
+    createNode(solidityNode)
+    createParentChildLink({
+      parent: parent,
+      child: solidityNode,
+    })
+
+    return solidityNode
+  }
 
   const prepareTransformParam = configPrepareTransformParam({
     transformObject,
@@ -30,11 +41,11 @@ async function onCreateNode({
   }
 
   const content = await loadNodeContent(node)
-  const parsedContent = parser.parse(content, { loc: true, range: true })
+  const parsedContent = parser.parse(content, {loc: true, range: true})
   parser.visit(parsedContent, {
     SourceUnit(ctx) {
       let sourceUnitNode = transformObject(
-        { relativePath: node.relativePath },
+        {relativePath: node.relativePath},
         createNodeId(`${node.id} >>> Solidity`),
         `Source`,
         node
@@ -65,7 +76,7 @@ async function onCreateNode({
   parser.visit(parsedContent, {
     ContractDefinition(ctx) {
       let contractDefinitionNode = transformObject(
-        { name: ctx.name },
+        {name: ctx.name},
         createNodeId(`${node.id} contract ${ctx.name} >>> Solidity`),
         `Contract`,
         ctx.parent
@@ -103,8 +114,8 @@ async function onCreateNode({
           ctx.parent
         )
       )
-      if (ctx.parameters && ctx.parameters.parameters) {
-        ctx.parameters.parameters.forEach(transformParam)
+      if (ctx.parameters) {
+        ctx.parameters.forEach(transformParam)
       }
     },
   })
@@ -122,8 +133,8 @@ async function onCreateNode({
         `EventDefinition`,
         ctx.parent
       )
-      if (ctx.parameters && ctx.parameters.parameters) {
-        ctx.parameters.parameters.forEach(param =>
+      if (ctx.parameters) {
+        ctx.parameters.forEach(param =>
           transformObject(
             {
               type:
@@ -173,12 +184,12 @@ async function onCreateNode({
       let transformParam = prepareTransformParam(functionNode)
 
       if (ctx.parameters) {
-        ctx.parameters.parameters.forEach(transformParam)
+        ctx.parameters.forEach(transformParam)
       }
 
       ctx.modifiers.forEach(modifier => {
         let modifierNode = transformObject(
-          { name: modifier.name },
+          {name: modifier.name},
           createNodeId(
             `${node.id} contract ${ctx.parent.name} function ${ctx.name} modifier ${modifier.name} >>> Solidity`
           ),
@@ -188,7 +199,7 @@ async function onCreateNode({
         if (modifier.arguments) {
           modifier.arguments.forEach(argument => {
             transformObject(
-              { name: argument.name },
+              {name: argument.name},
               createNodeId(
                 `${node.id} contract ${ctx.parent.name} function ${ctx.name} modifier ${modifier.name} arg${argument.name} >>> Solidity`
               ),
@@ -211,7 +222,7 @@ async function onCreateNode({
           )
         )
 
-        ctx.returnParameters.parameters.forEach(transformParam)
+        ctx.returnParameters.forEach(transformParam)
       }
     },
   })
